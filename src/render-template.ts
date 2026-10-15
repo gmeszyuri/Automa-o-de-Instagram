@@ -190,7 +190,7 @@ const illustratedSample: SlideSpec[] = [
     bodyHtml: "Golpistas falsificam o identificador de chamadas para parecer uma ligação oficial.",
     handleText: "@solutioncertificado",
     illustrationPrompt:
-      "Dramatic editorial illustration, a worried man looking at his smartphone showing a caller ID, behind him a shadowy hacker figure manipulating glowing red wires connected to a phone tower, dark cinematic lighting, digital art style, vertical composition, no text, no logos",
+      "A single person's hand holding a smartphone, the screen glowing with a soft red alert light, dark teal background, close-up, shallow depth of field, vertical composition",
     outputFile: "sample-illustrated-01.png",
   },
 ];

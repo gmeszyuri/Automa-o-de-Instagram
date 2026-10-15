@@ -2,6 +2,12 @@ import { writeFile } from "node:fs/promises";
 
 const API_URL = "https://api.openai.com/v1/images/generations";
 
+// Guia de estilo aplicado a toda ilustração gerada: composição limpa e com
+// um único foco visual, evitando cenas carregadas/"desorganizadas" com
+// muitos elementos competindo por atenção.
+const STYLE_PREFIX =
+  "Minimalist, clean editorial illustration with a single clear focal subject and generous empty negative space around it. Simple, uncluttered composition — avoid busy scenes with many competing elements. Muted, limited color palette. Professional, corporate tone. Scene: ";
+
 // Modelos de imagem às vezes "alucinam" texto/logos na cena mesmo quando
 // instruídos a não fazer isso. Reforça essa restrição em todo prompt,
 // já que o texto e o logo reais são sempre aplicados depois via HTML/CSS.
@@ -30,7 +36,7 @@ export class OpenAIImagesClient {
       },
       body: JSON.stringify({
         model: "gpt-image-1",
-        prompt: options.prompt + NO_TEXT_SUFFIX,
+        prompt: STYLE_PREFIX + options.prompt + NO_TEXT_SUFFIX,
         size: options.size ?? "1024x1536",
         n: 1,
       }),

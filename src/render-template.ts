@@ -7,7 +7,10 @@ import { OpenAIImagesClient } from "./lib/openaiImages.js";
 const TEMPLATES_DIR = path.resolve("templates");
 const OUTPUT_DIR = path.resolve("templates/output");
 const ILLUSTRATIONS_DIR = path.join(OUTPUT_DIR, "illustrations");
-const CHROMIUM_PATH = process.env.PLAYWRIGHT_CHROMIUM_PATH ?? "/opt/pw-browsers/chromium";
+// Sem PLAYWRIGHT_CHROMIUM_PATH, deixa o playwright-core localizar o Chromium
+// automaticamente (via PLAYWRIGHT_BROWSERS_PATH ou o cache padrão do SO,
+// preenchido por `npx playwright install chromium`).
+const CHROMIUM_PATH = process.env.PLAYWRIGHT_CHROMIUM_PATH;
 
 const WIDTH = 1080;
 const HEIGHT = 1350;
@@ -201,7 +204,7 @@ async function main() {
     console.log("Aviso: OPENAI_API_KEY não definido — exemplos com ilustração de IA serão pulados.\n");
   }
 
-  const browser = await chromium.launch({ executablePath: CHROMIUM_PATH });
+  const browser = await chromium.launch(CHROMIUM_PATH ? { executablePath: CHROMIUM_PATH } : {});
   try {
     console.log("Renderizando carrossel de amostra...");
     for (const spec of sampleCarousel) {

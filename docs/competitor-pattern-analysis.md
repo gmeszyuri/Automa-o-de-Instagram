@@ -47,6 +47,36 @@ Baseado em 36 posts coletados (12 por perfil) em 15/10/2026. Fonte: `references/
 5. **CTA de comentário** ("comente X e veja") gera mais alcance que CTA passivo de link na bio — considerar para posts específicos
 6. Datas comemorativas/sazonais leves (ex: Dia do Contador) são um bom "respiro" entre posts mais técnicos
 
-## Pendente
+## Análise visual (completa)
 
-Análise visual (paleta de cores usada, composição, uso de personagem/ilustração nas imagens) depende de receber imagens de exemplo — aguardando upload do usuário.
+Baseado em imagens de amostra reais dos 3 perfis (slides únicos e carrosséis completos).
+
+### @acertcertisign
+- **Paleta**: azul-marinho escuro + laranja/âmbar + branco/cinza-claro
+- **Fundo alterna**: foto realista (storytelling humano) → infográfico em fundo claro → fundo sólido azul-marinho → fundo claro novamente
+- **Efeito "marca-texto"**: bloco retangular sólido laranja atrás de frases-chave (título e CTA)
+- **Tipografia**: sans-serif bold geométrica, hierarquia clara (título grande → subtítulo laranja → corpo menor)
+- **Logo**: sempre no mesmo canto (topo-esquerdo nos slides internos)
+- **Elementos recorrentes**: mascote (cachorro "Thunder"), série nomeada "RADAR ACERT" (badge pílula) para posts de notícia, ilustração estilo IA para cenas dramáticas/abstratas vs. foto real para histórias humanas, infográfico numerado com ícones e conectores tracejados, ícones de curtir/comentar/compartilhar/salvar desenhados no último slide como nudge de engajamento
+
+### @safeweb_oficial
+- **Paleta**: azul elétrico/índigo vibrante + preto + fundo cinza-claro, laranja como acento raro
+- **Conceito criativo forte**: carrossel inteiro como metáfora de "playlist de app de música" (mockup de player estilo Spotify em modo escuro) para apresentar funcionalidades como "faixas"
+- **Mesmo efeito "marca-texto"** que a ACERT, mas na cor azul da marca
+- **Formas orgânicas abstratas** (manchas arredondadas) como textura de fundo
+- **Fotos reais de colaboradores** com crachá/cordão da marca, humanizando o conteúdo institucional
+- Tipografia arredondada/bold, tom mais "divertido"
+
+### @solutidigital
+- **Paleta**: degradê diagonal verde-petróleo → verde-limão (⚠️ muito próxima da paleta da Solution: `#2BF14E`/`#107266` — ver nota de risco abaixo)
+- **Blocos em formato de "balão de fala"/pílula** (não retângulo reto) para frases-chave, às vezes com ícone (selo de verificação, cursor)
+- **Fotos de equipe em uniforme da marca**, mescladas no fundo gradiente (sem moldura)
+- **Blobs/formas orgânicas desfocadas** como textura
+- Logo com wordmark itálico/inclinado + ícone geométrico
+- Linha de info com ícone (calendário, local) em posts de evento
+
+### Padrão cruzado nos 3 perfis
+O **efeito "marca-texto"** (bloco colorido sólido atrás de palavra/frase-chave, na cor de destaque da própria marca) aparece nos 3 — é uma convenção de design forte no nicho, provavelmente origem em templates populares (tipo Canva). Vale adotar para a Solution, usando `#2BF14E` como cor de destaque.
+
+### ⚠️ Risco de identidade visual
+A paleta de cores da Solution (`#2BF14E` primária, `#107266` secundária) é muito próxima da paleta da concorrente direta **Soluti** (verde-limão + verde-petróleo em degradê) — e os nomes das marcas já são parecidos ("Solution" vs. "Soluti"). Isso cria risco real de confusão no feed do público-alvo. Recomendo **diferenciar deliberadamente a aplicação**: por exemplo, evitar o degradê diagonal característico da Soluti, usar os tons da Solution mais como destaque pontual (efeito marca-texto, ícones) do que como fundo dominante, e manter contraste visual claro (ex: fundos escuros sólidos como a ACERT, ao invés de gradiente verde). Vale conversar com você antes de fechar o template final da Fase 4.

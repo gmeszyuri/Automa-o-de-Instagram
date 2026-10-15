@@ -41,5 +41,19 @@
     "#TransformacaoDigital",
     "#Solution"
   ],
-  "brandSignaturePlaceholder": "A definir: frase-assinatura própria da Solution (ex: inspirado em taglines recorrentes dos concorrentes)"
+  "brandSignaturePlaceholder": "A definir: frase-assinatura própria da Solution (ex: inspirado em taglines recorrentes dos concorrentes)",
+  "visualPatterns": {
+    "crossCompetitorConvention": "Bloco sólido ou formato pílula na cor de destaque da marca atrás de palavras-chave ('efeito marca-texto') — adotar usando #2BF14E",
+    "logoPlacement": "Canto superior esquerdo, consistente em todos os slides de um carrossel",
+    "backgroundStyles": [
+      "foto realista com overlay de texto (abertura/storytelling humano)",
+      "fundo sólido escuro (texto claro) para slides de conteúdo denso",
+      "fundo claro/infográfico para listas numeradas e diagramas"
+    ],
+    "colorRisk": {
+      "issue": "Paleta da Solution (#2BF14E / #107266) é muito próxima da paleta da concorrente Soluti (degradê verde-limão/verde-petróleo), somado à semelhança dos nomes das marcas",
+      "recommendation": "Evitar fundo em degradê diagonal verde (assinatura visual da Soluti). Preferir fundos sólidos escuros ou claros, usando o verde da Solution como cor de destaque pontual (marca-texto, ícones, bordas) em vez de cor dominante de fundo. Confirmar direção final com o usuário antes da Fase 4."
+    },
+    "avoidDirectCopy": "Não usar o conceito 'playlist/app de música' (autoral da Safeweb) nem o mascote/série 'RADAR ACERT' (autoral da ACERT) — usar apenas como inspiração estrutural"
+  }
 }

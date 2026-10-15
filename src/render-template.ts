@@ -204,7 +204,11 @@ async function main() {
     console.log("Aviso: OPENAI_API_KEY não definido — exemplos com ilustração de IA serão pulados.\n");
   }
 
-  const browser = await chromium.launch(CHROMIUM_PATH ? { executablePath: CHROMIUM_PATH } : {});
+  // channel "chromium" força o uso do Chrome completo em vez da variante
+  // "headless shell", que falha em algumas instalações do Windows.
+  const browser = await chromium.launch(
+    CHROMIUM_PATH ? { executablePath: CHROMIUM_PATH } : { channel: "chromium" }
+  );
   try {
     console.log("Renderizando carrossel de amostra...");
     for (const spec of sampleCarousel) {

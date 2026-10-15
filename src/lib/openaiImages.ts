@@ -2,6 +2,12 @@ import { writeFile } from "node:fs/promises";
 
 const API_URL = "https://api.openai.com/v1/images/generations";
 
+// Modelos de imagem às vezes "alucinam" texto/logos na cena mesmo quando
+// instruídos a não fazer isso. Reforça essa restrição em todo prompt,
+// já que o texto e o logo reais são sempre aplicados depois via HTML/CSS.
+const NO_TEXT_SUFFIX =
+  ". Absolutely no text, letters, words, numbers, watermarks, logos, or typography anywhere in the image — pure visual scene only.";
+
 export interface GenerateImageOptions {
   prompt: string;
   size?: "1024x1024" | "1024x1536" | "1536x1024";
@@ -24,7 +30,7 @@ export class OpenAIImagesClient {
       },
       body: JSON.stringify({
         model: "gpt-image-1",
-        prompt: options.prompt,
+        prompt: options.prompt + NO_TEXT_SUFFIX,
         size: options.size ?? "1024x1536",
         n: 1,
       }),

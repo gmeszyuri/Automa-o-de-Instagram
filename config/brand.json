@@ -1,0 +1,13 @@
+{
+  "name": "Solution Certificado Digital",
+  "colors": {
+    "primary": "#2BF14E",
+    "secondary": "#107266",
+    "background_dark": "#000000",
+    "background_light": "#FFFFFF"
+  },
+  "logo": {
+    "forLightBackground": "assets/brand/logo-light-bg.jpg",
+    "forDarkBackground": "assets/brand/logo-dark-bg.jpg"
+  }
+}

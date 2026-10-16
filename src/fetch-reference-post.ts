@@ -1,12 +1,9 @@
 import "dotenv/config";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { ScrapeCreatorsClient, type InstagramPost } from "./lib/scrapeCreators.js";
+import { ScrapeCreatorsClient } from "./lib/scrapeCreators.js";
 
 const OUTPUT_DIR = path.resolve("references");
-
-const MEDIA_TYPE_VIDEO = 2;
-const MEDIA_TYPE_CAROUSEL = 8;
 
 interface SavedPostMeta {
   code: string;
@@ -26,47 +23,85 @@ interface SavedIndex {
   posts: SavedPostMeta[];
 }
 
-function extractHandleAndCode(postUrl: string): { code: string } {
+function extractCode(postUrl: string): string {
   const match = postUrl.match(/instagram\.com\/p\/([^/?]+)/);
   if (!match) {
     throw new Error(`Não consegui extrair o código do post da URL: ${postUrl}`);
   }
-  return { code: match[1] };
+  return match[1];
+}
+
+/** Um nó de mídia do shape GraphQL nativo do Instagram (post único ou filho de carrossel). */
+interface GraphQLMediaNode {
+  __typename?: string;
+  is_video?: boolean;
+  display_url?: string;
+}
+
+interface GraphQLShortcodeMedia {
+  __typename?: string;
+  shortcode?: string;
+  display_url?: string;
+  is_video?: boolean;
+  taken_at_timestamp?: number;
+  comment_count?: number;
+  edge_media_to_caption?: { edges?: { node?: { text?: string } }[] };
+  edge_media_preview_like?: { count?: number };
+  edge_sidecar_to_children?: { edges?: { node?: GraphQLMediaNode }[] };
+}
+
+interface ExtractedPost {
+  code: string;
+  mediaType: "image" | "carousel";
+  imageUrls: string[];
+  caption: string;
+  likeCount?: number;
+  commentCount?: number;
+  takenAt?: string;
 }
 
 /**
- * A API não documenta publicamente a forma da resposta de /v1/instagram/post.
- * Tenta os formatos mais prováveis (mesmo "formato nativo" usado por
- * /v2/instagram/user/posts) antes de desistir. Se nenhum bater, quem chama
- * deve inspecionar o arquivo *-raw.json salvo e ajustar esta função.
+ * Extrai os campos que usamos a partir do shape GraphQL nativo do Instagram
+ * (resposta de /v1/instagram/post: { data: { xdt_shortcode_media: {...} } }).
+ * Confirmado em 17/10/2026 a partir de uma resposta real da API — ver
+ * references/<handle>/<code>-raw.json salvo por este script para o shape
+ * completo caso a API mude ou um carrossel traga campos diferentes.
  */
-function resolvePostFromRawResponse(raw: unknown): InstagramPost | null {
-  if (!raw || typeof raw !== "object") return null;
-  const obj = raw as Record<string, unknown>;
+export function extractFromGraphQLResponse(raw: unknown): ExtractedPost | null {
+  const media = (raw as { data?: { xdt_shortcode_media?: GraphQLShortcodeMedia } } | undefined)
+    ?.data?.xdt_shortcode_media;
+  if (!media || !media.shortcode) return null;
 
-  const candidates: unknown[] = [
-    obj.post,
-    obj.data,
-    Array.isArray(obj.items) ? obj.items[0] : undefined,
-    obj,
-  ];
+  const caption = media.edge_media_to_caption?.edges?.[0]?.node?.text ?? "";
+  const likeCount = media.edge_media_preview_like?.count;
+  const commentCount = media.comment_count;
+  const takenAt = media.taken_at_timestamp
+    ? new Date(media.taken_at_timestamp * 1000).toISOString()
+    : undefined;
 
-  for (const candidate of candidates) {
-    if (
-      candidate &&
-      typeof candidate === "object" &&
-      "code" in candidate &&
-      "media_type" in candidate
-    ) {
-      return candidate as InstagramPost;
+  const isSidecar = media.__typename === "XDTGraphSidecar";
+  const imageUrls: string[] = [];
+
+  if (isSidecar) {
+    for (const edge of media.edge_sidecar_to_children?.edges ?? []) {
+      const node = edge.node;
+      if (node && !node.is_video && node.display_url) {
+        imageUrls.push(node.display_url);
+      }
     }
+  } else if (!media.is_video && media.display_url) {
+    imageUrls.push(media.display_url);
   }
-  return null;
-}
 
-function bestImageUrl(candidates?: { url: string; width: number }[]): string | undefined {
-  if (!candidates || candidates.length === 0) return undefined;
-  return [...candidates].sort((a, b) => b.width - a.width)[0]?.url;
+  return {
+    code: media.shortcode,
+    mediaType: isSidecar ? "carousel" : "image",
+    imageUrls,
+    caption,
+    likeCount,
+    commentCount,
+    takenAt,
+  };
 }
 
 async function downloadImage(url: string, destPath: string): Promise<void> {
@@ -92,7 +127,7 @@ async function main() {
 
   const apiKey = process.env.SCRAPECREATORS_API_KEY ?? "";
   const client = new ScrapeCreatorsClient(apiKey);
-  const { code: codeFromUrl } = extractHandleAndCode(postUrl);
+  const codeFromUrl = extractCode(postUrl);
 
   console.log(`Buscando post ${postUrl}...`);
   const raw = await client.getPostRaw(postUrl);
@@ -101,54 +136,44 @@ async function main() {
   await mkdir(profileDir, { recursive: true });
   const rawDebugPath = path.join(profileDir, `${codeFromUrl}-raw.json`);
   await writeFile(rawDebugPath, JSON.stringify(raw, null, 2));
-  console.log(`  Resposta bruta salva em ${rawDebugPath} (para debug, caso o parse falhe)`);
 
-  const post = resolvePostFromRawResponse(raw);
-  if (!post) {
+  const extracted = extractFromGraphQLResponse(raw);
+  if (!extracted) {
     console.error(
-      "\nNão consegui reconhecer o formato da resposta da API. Abra o arquivo *-raw.json acima,\n" +
-        "veja onde estão os campos 'code', 'media_type', 'caption', 'image_versions2' e ajuste\n" +
-        "resolvePostFromRawResponse() em src/fetch-reference-post.ts."
+      `\nNão reconheci o formato da resposta. Confira ${rawDebugPath} e ajuste\n` +
+        "extractFromGraphQLResponse() em src/fetch-reference-post.ts."
     );
     process.exitCode = 1;
     return;
   }
 
-  const code = post.code || codeFromUrl;
-  const postDir = path.join(profileDir, code);
+  const postDir = path.join(profileDir, extracted.code);
   await mkdir(postDir, { recursive: true });
 
-  const slides =
-    post.media_type === MEDIA_TYPE_CAROUSEL
-      ? (post.carousel_media ?? []).filter((m) => m.media_type !== MEDIA_TYPE_VIDEO)
-      : [post];
-
   const localImages: string[] = [];
-  for (let i = 0; i < slides.length; i++) {
-    const imageUrl = bestImageUrl(slides[i].image_versions2?.candidates);
-    if (!imageUrl) continue;
+  for (let i = 0; i < extracted.imageUrls.length; i++) {
     const fileName = `slide-${String(i + 1).padStart(2, "0")}.jpg`;
     const destPath = path.join(postDir, fileName);
-    await downloadImage(imageUrl, destPath);
+    await downloadImage(extracted.imageUrls[i], destPath);
     localImages.push(path.relative(OUTPUT_DIR, destPath));
     console.log(`  + slide-${i + 1} baixado`);
   }
 
   if (localImages.length === 0) {
-    console.error("Nenhuma imagem baixada — confira o *-raw.json pra ver se o post tem mídia.");
+    console.error(`Nenhuma imagem baixada — confira ${rawDebugPath} pra ver se o post tem mídia de imagem.`);
     process.exitCode = 1;
     return;
   }
 
   const meta: SavedPostMeta = {
-    code,
+    code: extracted.code,
     permalink: postUrl,
-    mediaType: post.media_type === MEDIA_TYPE_CAROUSEL ? "carousel" : "image",
+    mediaType: extracted.mediaType,
     slideCount: localImages.length,
-    caption: post.caption?.text ?? "",
-    likeCount: post.like_count,
-    commentCount: post.comment_count,
-    takenAt: post.taken_at ? new Date(post.taken_at * 1000).toISOString() : undefined,
+    caption: extracted.caption,
+    likeCount: extracted.likeCount,
+    commentCount: extracted.commentCount,
+    takenAt: extracted.takenAt,
     localImages,
   };
   await writeFile(path.join(postDir, "meta.json"), JSON.stringify(meta, null, 2));
@@ -161,10 +186,10 @@ async function main() {
   } catch {
     index = { handle, collectedAt: new Date().toISOString(), posts: [] };
   }
-  index.posts = [...index.posts.filter((p) => p.code !== code), meta];
+  index.posts = [...index.posts.filter((p) => p.code !== extracted.code), meta];
   await writeFile(indexPath, JSON.stringify(index, null, 2));
 
-  console.log(`\nPronto. Use reference: "${handle}/${code}" nos specs do render-template.ts.`);
+  console.log(`\nPronto. Use reference: "${handle}/${extracted.code}" nos specs do render-template.ts.`);
 }
 
 main().catch((err) => {

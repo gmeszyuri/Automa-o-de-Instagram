@@ -66,6 +66,9 @@ html, body {
 }
 
 .headline {
+  /* contexto de empilhamento próprio para o z-index do mark abaixo */
+  position: relative;
+  z-index: 0;
   font-weight: 800;
   font-size: 76px;
   line-height: 1.08;
@@ -73,7 +76,11 @@ html, body {
   max-width: 880px;
 }
 
+/* Com line-height 1.08 o bloco verde invade a linha de cima e cortava as
+   pernas de letras como "g" e "q"; atrás do texto, ele não corta mais. */
 .headline mark {
+  position: relative;
+  z-index: -1;
   background: var(--brand-primary);
   color: var(--text-on-accent);
   padding: 0 10px;
@@ -177,6 +184,13 @@ html, body {
 .slide--illustrated {
   padding: 0;
   background: var(--bg-dark);
+  color: var(--text-on-dark);
+}
+
+/* O margin-top do badge existe para desviar do logo nos slides sem foto;
+   dentro do card ele só empurrava o texto para baixo. */
+.content-card .badge {
+  margin-top: 0;
 }
 
 .illustration-frame {
@@ -193,10 +207,25 @@ html, body {
   display: block;
 }
 
+/* Escurece a base da imagem até a cor do card, para a foto "entrar" no
+   card em vez de terminar num corte seco. */
+.illustration-frame::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 260px;
+  background: linear-gradient(to bottom, rgba(8, 26, 23, 0) 0%, var(--bg-dark) 100%);
+}
+
+/* A regra acima (width/height 100%) também pegava o logo e o esticava
+   para 1080px de largura; aqui o logo volta ao tamanho natural. */
 .illustration-frame .logo {
   top: 40px;
   left: 40px;
+  width: auto;
   height: 52px;
+  object-fit: contain;
+  z-index: 1;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
 }
 

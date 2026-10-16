@@ -2,21 +2,31 @@ import { writeFile } from "node:fs/promises";
 
 const API_URL = "https://api.openai.com/v1/images/generations";
 
-// Guia de estilo aplicado a toda ilustração gerada: composição limpa e com
-// um único foco visual, evitando cenas carregadas/"desorganizadas" com
-// muitos elementos competindo por atenção.
-const STYLE_PREFIX =
-  "Minimalist, clean editorial illustration with a single clear focal subject and generous empty negative space around it. Simple, uncluttered composition — avoid busy scenes with many competing elements. Muted, limited color palette. Professional, corporate tone. Scene: ";
+// Direção de arte aplicada a toda imagem gerada. Define UM meio só (foto
+// editorial — misturar "illustration" com termos de fotografia gerava um
+// resultado híbrido artificial), a paleta da marca e o enquadramento do
+// template illustrated-hook: faixa horizontal 1080x780 cuja base é coberta
+// pelo card escuro (#081A17), por isso a base da imagem precisa escurecer
+// para esse mesmo tom.
+const STYLE_PREFIX = [
+  "Cinematic editorial photograph, shot on a full-frame camera with a 50mm lens, natural soft key light from one side and deep shadows, high detail, realistic skin and materials.",
+  "Wide horizontal frame with one clear subject placed in the upper-center; the lower third of the frame fades into a very dark green-black (#081A17).",
+  "Color palette: dominant near-black and deep green tones, with a single small accent of vivid neon green (#2BF14E) light; no other saturated colors.",
+  "Calm, trustworthy, modern mood.",
+  "Scene:",
+].join(" ");
 
 // Modelos de imagem às vezes "alucinam" texto/logos na cena mesmo quando
-// instruídos a não fazer isso. Reforça essa restrição em todo prompt,
-// já que o texto e o logo reais são sempre aplicados depois via HTML/CSS.
+// instruídos a não fazer isso. Texto e logo reais são sempre aplicados
+// depois via HTML/CSS, então a cena precisa sair limpa — e telas/placas
+// devem ser descritas como vazias no próprio prompt da cena.
 const NO_TEXT_SUFFIX =
-  ". Absolutely no text, letters, words, numbers, watermarks, logos, or typography anywhere in the image — pure visual scene only.";
+  " The image contains no text, lettering, numbers, logos or watermarks; any screens or signs are blank or show only abstract light.";
 
 export interface GenerateImageOptions {
   prompt: string;
   size?: "1024x1024" | "1024x1536" | "1536x1024";
+  quality?: "low" | "medium" | "high";
 }
 
 export class OpenAIImagesClient {
@@ -36,8 +46,9 @@ export class OpenAIImagesClient {
       },
       body: JSON.stringify({
         model: "gpt-image-1",
-        prompt: STYLE_PREFIX + options.prompt + NO_TEXT_SUFFIX,
-        size: options.size ?? "1024x1536",
+        prompt: `${STYLE_PREFIX} ${options.prompt.trim().replace(/\.?$/, ".")}${NO_TEXT_SUFFIX}`,
+        size: options.size ?? "1536x1024",
+        quality: options.quality ?? "high",
         n: 1,
       }),
     });

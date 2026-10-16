@@ -8,6 +8,8 @@
   },
   "logo": {
     "forLightBackground": "assets/brand/logo-light-bg.jpg",
-    "forDarkBackground": "assets/brand/logo-dark-bg.jpg"
+    "forDarkBackground": "assets/brand/logo-dark-bg.jpg",
+    "transparentForDarkBackground": "assets/brand/logo-transparent.png",
+    "transparentForLightBackground": "assets/brand/logo-transparent-light.png"
   }
 }

@@ -12,6 +12,7 @@ const STYLE_PREFIX = [
   "Cinematic editorial photograph, shot on a full-frame camera with a 50mm lens, natural soft key light from one side and deep shadows, high detail, realistic skin and materials.",
   "Wide horizontal frame with one clear subject placed in the upper-center; the lower third of the frame fades into a very dark green-black (#081A17).",
   "Color palette: dominant near-black and deep green tones, with a single small accent of vivid neon green (#2BF14E) light; no other saturated colors.",
+  "Ground the subject in real, specific physical details from Brazilian digital-certification work (an ICP-Brasil smart card or USB token, a signed contract page, a notary stamp, a laptop on a real desk) instead of generic corporate stock-photo tropes (handshakes, abstract glowing orbs, laptop-and-coffee flatlays).",
   "Calm, trustworthy, modern mood.",
   "Scene:",
 ].join(" ");

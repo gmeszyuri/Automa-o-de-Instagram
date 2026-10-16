@@ -236,7 +236,7 @@ const illustratedSample: SlideSpec[] = [
     handleText: "@solutioncertificado",
     reference: "top",
     illustrationPrompt:
-      "A person's hand holding a smartphone at chest height, seen from a slight side angle; the phone screen is blank and glows with a soft red light that tints the fingers; dark, out-of-focus office background",
+      "A hand placing an ICP-Brasil USB security token into a laptop at a real desk, seen from a slight side angle, the token catching a thin red warning-colored glint; dark, out-of-focus office background",
     outputFile: "sample-illustrated-01.png",
   },
 ];

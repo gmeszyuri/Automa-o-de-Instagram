@@ -74,6 +74,7 @@ Your job: write the scene for a NEW photo that illustrates the Solution headline
 Rules for the scene:
 - One clear subject, at most two supporting elements. Nothing busy.
 - It must make sense for the Solution headline, not for the competitor's post.
+- Ground the subject in a real, concrete object or moment from Brazilian digital-certificate work (a smart card, a USB token, a signed contract, a notary's desk, a specific gesture of signing or verifying) instead of generic corporate stock-photo tropes (handshake, abstract glowing orb, laptop-and-coffee flatlay).
 - Never reproduce competitor identity: no logos, mascots (e.g. a dog character), uniforms, recognizable people, their brand colors (orange, electric blue, lime-to-teal gradients), or their signature concepts (music-player/playlist mockups, "RADAR" news series).
 - Any phone, monitor or document in the scene is blank or shows only abstract light — never readable UI, text or numbers.
 - Describe only content and composition, in English, 1-3 sentences. Do not describe art style, color palette or the text overlay; those are handled elsewhere.`;

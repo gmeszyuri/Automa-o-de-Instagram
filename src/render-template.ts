@@ -107,6 +107,14 @@ interface SlideSpec {
    * referências ainda não foi feita.
    */
   illustrationPrompt?: string;
+  /**
+   * Restringe o tipo de assunto que a cena gerada por referência deve ter
+   * (ex: "a person", "an object"), mesmo que o post de referência escolhido
+   * mostre outra coisa. Sem isso, o template "quote-portrait" podia herdar
+   * uma cena de objeto (ex: token USB) do post de melhor desempenho do
+   * perfil, que nem sempre é um retrato de pessoa.
+   */
+  requiredSubject?: string;
   /** Apenas para template "illustrated-hook": texto do handle exibido na lateral. */
   handleText?: string;
   /** Apenas para template "quote-portrait": rótulo pequeno do contato (ex: "Entre em contato"). */
@@ -137,7 +145,12 @@ async function resolveScene(spec: SlideSpec, ai: AiClients): Promise<{ scene: st
     const ref = await pickReference(REFERENCES_DIR, spec.reference);
     if (ref) {
       console.log(`  ... lendo referência @${ref.handle}/${ref.code} para escrever a cena`);
-      const result = await ai.scenes.writeScene(ref, stripHtml(spec.headlineHtml), stripHtml(spec.bodyHtml ?? ""));
+      const result = await ai.scenes.writeScene(
+        ref,
+        stripHtml(spec.headlineHtml),
+        stripHtml(spec.bodyHtml ?? ""),
+        spec.requiredSubject
+      );
       return {
         scene: result.scene,
         notes: `Referência: ${ref.permalink} (${ref.likeCount ?? "?"} likes)\nO que funciona nela: ${result.referenceTakeaways}`,
@@ -298,6 +311,8 @@ const quotePortraitSample: SlideSpec[] = [
     headlineHtml: `“Atenção: seu certificado <mark class="alert">vence hoje</mark>.”`,
     bodyHtml: `Essa frase já pegou contador, advogado e empresário de surpresa. <mark>Você reconheceria o aviso?</mark>`,
     reference: "top",
+    requiredSubject:
+      "a confident Brazilian businessperson (not a hand, not an object), three-quarter portrait, arms crossed, looking at camera",
     illustrationPrompt:
       "Three-quarter portrait of a confident Brazilian businesswoman in her 40s wearing a navy blazer, arms crossed, standing in a modern office with soft window light from one side, shallow depth of field",
     contactLabel: "Entre em contato",

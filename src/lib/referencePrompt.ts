@@ -108,9 +108,18 @@ export class ReferencePromptWriter {
     }
   }
 
-  async writeScene(reference: ReferencePost, headline: string, body: string): Promise<ScenePrompt> {
+  async writeScene(
+    reference: ReferencePost,
+    headline: string,
+    body: string,
+    requiredSubject?: string
+  ): Promise<ScenePrompt> {
     const mediaType = MEDIA_TYPE[path.extname(reference.imagePath).toLowerCase()] ?? "image/jpeg";
     const imageB64 = (await readFile(reference.imagePath)).toString("base64");
+
+    const subjectConstraint = requiredSubject
+      ? `\nMandatory subject: the new scene's main subject MUST be ${requiredSubject}, regardless of what the reference image's own subject is. Adapt only the transferable craft (framing, light, mood, camera distance) from the reference — not its subject type.`
+      : "";
 
     const response = await fetch(API_URL, {
       method: "POST",
@@ -125,7 +134,10 @@ export class ReferencePromptWriter {
           {
             role: "user",
             content: [
-              { type: "input_text", text: `Solution headline: ${headline}\nSupporting text: ${body}` },
+              {
+                type: "input_text",
+                text: `Solution headline: ${headline}\nSupporting text: ${body}${subjectConstraint}`,
+              },
               { type: "input_image", image_url: `data:${mediaType};base64,${imageB64}` },
             ],
           },

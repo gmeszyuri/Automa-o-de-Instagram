@@ -351,6 +351,13 @@ const alertCardsSample: SlideSpec[] = [
   },
 ];
 
+const SAMPLE_GROUPS: Record<string, { label: string; specs: SlideSpec[] }> = {
+  carousel: { label: "carrossel de amostra", specs: sampleCarousel },
+  illustrated: { label: "exemplo com ilustração de IA", specs: illustratedSample },
+  quote: { label: "exemplo de retrato com citação", specs: quotePortraitSample },
+  alert: { label: "exemplo de cards de alerta", specs: alertCardsSample },
+};
+
 async function main() {
   await mkdir(OUTPUT_DIR, { recursive: true });
 
@@ -362,30 +369,29 @@ async function main() {
     console.log("Aviso: OPENAI_API_KEY não definido — exemplos com ilustração de IA serão pulados.\n");
   }
 
+  // Uso: npm run render-sample -- quote   (só esse grupo, economiza crédito de IA ao iterar)
+  //      npm run render-sample            (todos os grupos)
+  const filterGroup = process.argv[2];
+  if (filterGroup && !SAMPLE_GROUPS[filterGroup]) {
+    console.error(
+      `Grupo "${filterGroup}" não existe. Opções: ${Object.keys(SAMPLE_GROUPS).join(", ")}`
+    );
+    process.exitCode = 1;
+    return;
+  }
+  const groups = filterGroup ? [SAMPLE_GROUPS[filterGroup]] : Object.values(SAMPLE_GROUPS);
+
   // channel "chromium" força o uso do Chrome completo em vez da variante
   // "headless shell", que falha em algumas instalações do Windows.
   const browser = await chromium.launch(
     CHROMIUM_PATH ? { executablePath: CHROMIUM_PATH } : { channel: "chromium" }
   );
   try {
-    console.log("Renderizando carrossel de amostra...");
-    for (const spec of sampleCarousel) {
-      await renderSlide(browser, spec, ai);
-    }
-
-    console.log("\nRenderizando exemplo com ilustração de IA...");
-    for (const spec of illustratedSample) {
-      await renderSlide(browser, spec, ai);
-    }
-
-    console.log("\nRenderizando exemplo de retrato com citação...");
-    for (const spec of quotePortraitSample) {
-      await renderSlide(browser, spec, ai);
-    }
-
-    console.log("\nRenderizando exemplo de cards de alerta...");
-    for (const spec of alertCardsSample) {
-      await renderSlide(browser, spec, ai);
+    for (const group of groups) {
+      console.log(`\nRenderizando ${group.label}...`);
+      for (const spec of group.specs) {
+        await renderSlide(browser, spec, ai);
+      }
     }
   } finally {
     await browser.close();

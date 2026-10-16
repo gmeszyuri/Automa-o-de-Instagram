@@ -121,9 +121,22 @@ async function main() {
 
   await mkdir(OUTPUT_DIR, { recursive: true });
 
+  // Uso: npm run collect-references -- acertcertisign
+  // Sem argumento, coleta todos os perfis de config/competitors.json.
+  const filterHandle = process.argv[2];
+  const profiles = filterHandle
+    ? competitors.profiles.filter((p) => p.handle === filterHandle)
+    : competitors.profiles;
+
+  if (filterHandle && profiles.length === 0) {
+    console.error(`Perfil "${filterHandle}" não encontrado em config/competitors.json`);
+    process.exitCode = 1;
+    return;
+  }
+
   const summary: Record<string, number> = {};
 
-  for (const { handle } of competitors.profiles) {
+  for (const { handle } of profiles) {
     console.log(`\nColetando referências de @${handle}...`);
     try {
       const posts = await collectProfile(client, handle);

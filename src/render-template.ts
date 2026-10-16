@@ -184,6 +184,10 @@ async function renderSlide(
 
   const page = await browser.newPage({ viewport: { width: WIDTH, height: HEIGHT } });
   await page.goto(`file://${tempHtmlPath}`, { waitUntil: "networkidle" });
+  // "networkidle" não garante que a fonte do Google Fonts (Poppins) já foi
+  // aplicada ao texto — sem isso o screenshot às vezes sai com a fonte
+  // padrão do sistema em vez da Poppins.
+  await page.evaluate(() => document.fonts.ready);
   const outputPath = path.join(OUTPUT_DIR, spec.outputFile);
   await page.screenshot({ path: outputPath });
   await page.close();

@@ -27,6 +27,12 @@
     "default": "Educativo e confiável, com toques leves de humor em conteúdo sazonal",
     "avoid": ["jargão técnico sem explicação", "tom alarmista", "promessas de milagre"]
   },
+  "copyRules": {
+    "oneMessagePerSlide": "Uma ideia central por slide — se precisar de duas mensagens, vira dois slides.",
+    "readableInSeconds": "Cada slide deve ser lido em 3-4 segundos (frases curtas, sem parágrafo denso).",
+    "contrastMinimum": "Contraste texto/fundo mínimo de 4.5:1 em todo slide (acessibilidade).",
+    "source": "Adaptado de referências públicas de geração de carrossel pesquisadas em 16/10/2026 (ver docs/third-party-research.md)"
+  },
   "ctaPatterns": [
     "Fale com a gente pelo link da bio",
     "Comente [palavra] e saiba mais",

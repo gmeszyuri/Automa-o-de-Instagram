@@ -31,6 +31,13 @@
     "oneMessagePerSlide": "Uma ideia central por slide — se precisar de duas mensagens, vira dois slides.",
     "readableInSeconds": "Cada slide deve ser lido em 3-4 segundos (frases curtas, sem parágrafo denso).",
     "contrastMinimum": "Contraste texto/fundo mínimo de 4.5:1 em todo slide (acessibilidade).",
+    "bannedWords": ["só", "realmente", "literalmente", "basicamente", "simplesmente", "muito fácil"],
+    "hookFormulas": [
+      "Contrariedade: 'Seu [processo] está do jeito errado.'",
+      "Promessa numerada: '[N] erros de [tema] que custam caro pra [público].'",
+      "Desafio direto: 'Aposto que você ainda faz isso em 2026.'",
+      "Pergunta de alerta: 'Você reconheceria esse golpe/erro?' (bom para o formato quote-portrait)"
+    ],
     "source": "Adaptado de referências públicas de geração de carrossel pesquisadas em 16/10/2026 (ver docs/third-party-research.md)"
   },
   "ctaPatterns": [

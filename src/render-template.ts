@@ -310,11 +310,11 @@ const quotePortraitSample: SlideSpec[] = [
     background: "dark",
     headlineHtml: `“Atenção: seu certificado <mark class="alert">vence hoje</mark>.”`,
     bodyHtml: `Essa frase já pegou contador, advogado e empresário de surpresa. <mark>Você reconheceria o aviso?</mark>`,
-    reference: "top",
+    reference: "acertcertisign/DY2Acs0oMbL",
     requiredSubject:
-      "a confident Brazilian businessperson (not a hand, not an object), three-quarter portrait, arms crossed, looking at camera",
+      "a confident Brazilian businessperson (not a hand, not an object), upper-body portrait, looking directly at camera, holding a small prop related to time/urgency",
     illustrationPrompt:
-      "Three-quarter portrait of a confident Brazilian businesswoman in her 40s wearing a navy blazer, arms crossed, standing in a modern office with soft window light from one side, shallow depth of field",
+      "Upper-body portrait of a smiling Brazilian businesswoman in a navy blazer, holding up a stopwatch toward the camera, modern office with soft window light from one side, shallow depth of field",
     contactLabel: "Entre em contato",
     contactValue: "0800 123 4567",
     outputFile: "sample-quote-01.png",

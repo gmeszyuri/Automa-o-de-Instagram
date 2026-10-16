@@ -137,7 +137,7 @@ const sampleCarousel: SlideSpec[] = [
     template: "single-hook",
     background: "dark",
     badgeText: "RADAR SOLUTION",
-    headlineHtml: `4 sinais de que seu <mark>certificado está vencendo</mark>`,
+    headlineHtml: `4 sinais de que seu certificado está <mark>vencendo</mark>`,
     bodyHtml: "Antes que vire dor de cabeça na hora de assinar, confira os alertas que costumam aparecer primeiro.",
     ctaPillText: "Veja no carrossel",
     ctaText: "Arraste para o lado →",
@@ -186,7 +186,7 @@ const illustratedSample: SlideSpec[] = [
     template: "illustrated-hook",
     background: "dark",
     badgeText: "RADAR SOLUTION",
-    headlineHtml: `O número na tela <mark>pode mentir</mark>`,
+    headlineHtml: `O número na tela pode <mark>mentir</mark>`,
     bodyHtml: "Golpistas falsificam o identificador de chamadas para parecer uma ligação oficial.",
     handleText: "@solutioncertificado",
     illustrationPrompt:

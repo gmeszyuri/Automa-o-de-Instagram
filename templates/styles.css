@@ -88,13 +88,12 @@ html, body {
   background: var(--brand-primary);
   color: var(--text-on-accent);
   padding: 0 10px;
-  border-radius: 6px;
+  border-radius: 0;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
-/* Variante de alerta/urgência (ex: "certificado vence hoje") — usar com
-   moderação, só quando a mensagem é mesmo um aviso de risco/prazo. */
+/* Variante de alerta/urgência (ex: "certificado vence hoje"). */
 .headline mark.alert {
   background: var(--alert);
   color: var(--text-on-alert);
@@ -263,6 +262,71 @@ html, body {
   flex-direction: column;
 }
 
+/* Aba triangular puxando a foto para o card — detalhe recorrente nas
+   referências da ACERT (ex: posts "RADAR ACERT"). */
+.content-card::before {
+  content: "";
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 28px;
+  background: var(--bg-dark);
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+/* Lista de "cards de alerta": card claro sobre fundo escuro, com selo
+   vermelho sobreposto na borda superior — padrão visto em carrossel de
+   alerta de golpe da ACERT. */
+.alert-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin-top: 16px;
+}
+
+.alert-card {
+  position: relative;
+  background: var(--bg-light);
+  border-radius: 20px;
+  padding: 36px 32px 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.alert-card-badge {
+  position: absolute;
+  top: -20px;
+  left: 32px;
+  background: var(--alert);
+  color: var(--text-on-alert);
+  font-weight: 700;
+  font-size: 20px;
+  padding: 8px 20px;
+  border-radius: 999px;
+}
+
+.alert-card-icon {
+  font-size: 44px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.alert-card-title {
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--text-on-light);
+  margin-bottom: 6px;
+}
+
+.alert-card-body {
+  font-size: 23px;
+  line-height: 1.4;
+  color: var(--muted-on-light);
+}
+
 .handle-vertical {
   position: absolute;
   top: 56px;
@@ -331,7 +395,7 @@ html, body {
 .quote-headline mark {
   position: relative;
   padding: 0 10px;
-  border-radius: 6px;
+  border-radius: 0;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -353,7 +417,7 @@ html, body {
   background: var(--alert);
   color: var(--text-on-alert);
   padding: 0 8px;
-  border-radius: 4px;
+  border-radius: 0;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }

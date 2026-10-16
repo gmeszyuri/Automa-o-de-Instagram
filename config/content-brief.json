@@ -57,7 +57,7 @@
   "brandSignaturePlaceholder": "A definir: frase-assinatura própria da Solution (ex: inspirado em taglines recorrentes dos concorrentes)",
   "visualPatterns": {
     "crossCompetitorConvention": "Bloco sólido ou formato pílula na cor de destaque da marca atrás de palavras-chave ('efeito marca-texto') — adotar usando #2BF14E",
-    "markUsageRule": "Usar o marca-texto com moderação, como a @acertcertisign faz: no máximo 1-3 palavras-chave por headline, cabendo idealmente numa linha só. Nunca destacar metade da frase ou deixar o bloco quebrar em múltiplas linhas grandes — isso foge do padrão profissional de design e fica exagerado (ajustado em 16/10/2026 a partir de feedback do usuário).",
+    "markUsageRule": "Pode destacar frases inteiras (não só 1-3 palavras) quando fizer sentido editorial, como a @acertcertisign faz em posts de alerta/urgência — ex: duas linhas completas destacadas em sequência. O bloco de destaque é sempre retangular reto (border-radius: 0), nunca arredondado — visual de marcador de texto literal, não de pílula/botão (revisado em 16/10/2026 com novas referências da ACERT; supera a regra anterior de '1-3 palavras').",
     "logoPlacement": "Canto superior esquerdo, consistente em todos os slides de um carrossel",
     "backgroundStyles": [
       "foto realista com overlay de texto (abertura/storytelling humano)",

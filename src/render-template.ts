@@ -53,13 +53,44 @@ function listItems(items: string[]): string {
     .join("\n");
 }
 
+function alertCards(items: AlertCardItem[]): string {
+  return items
+    .map(
+      (item) => `
+    <div class="alert-card">
+      <span class="alert-card-badge">${item.badge}</span>
+      <span class="alert-card-icon">${item.icon}</span>
+      <div>
+        <div class="alert-card-title">${item.title}</div>
+        <div class="alert-card-body">${item.body}</div>
+      </div>
+    </div>`
+    )
+    .join("\n");
+}
+
+interface AlertCardItem {
+  badge: string;
+  icon: string;
+  title: string;
+  body: string;
+}
+
 interface SlideSpec {
-  template: "single-hook" | "carousel-content" | "carousel-cta" | "illustrated-hook" | "quote-portrait";
+  template:
+    | "single-hook"
+    | "carousel-content"
+    | "carousel-cta"
+    | "illustrated-hook"
+    | "quote-portrait"
+    | "carousel-alert-cards";
   background: "dark" | "light";
   badgeText?: string;
   headlineHtml: string;
   bodyHtml?: string;
   listItemsText?: string[];
+  /** Apenas para template "carousel-alert-cards": lista de cards de alerta. */
+  alertItems?: AlertCardItem[];
   ctaPillText?: string;
   ctaText?: string;
   slidePosition?: [number, number];
@@ -172,6 +203,7 @@ async function renderSlide(
     headlineHtml: spec.headlineHtml,
     bodyHtml: spec.bodyHtml ?? "",
     listHtml: spec.listItemsText ? listItems(spec.listItemsText) : "",
+    alertCardsHtml: spec.alertItems ? alertCards(spec.alertItems) : "",
     ctaPillHtml: spec.ctaPillText ? `<span class="cta-pill">${spec.ctaPillText}</span>` : "",
     ctaTextHtml: spec.ctaText ? `<span class="cta-text">${spec.ctaText}</span>` : "",
     contactHtml,
@@ -274,6 +306,36 @@ const quotePortraitSample: SlideSpec[] = [
   },
 ];
 
+const alertCardsSample: SlideSpec[] = [
+  {
+    template: "carousel-alert-cards",
+    background: "dark",
+    headlineHtml: "Antes de clicar, observe estes sinais:",
+    alertItems: [
+      {
+        badge: "Sinal de alerta 1:",
+        icon: "⏱️",
+        title: "Pressa artificial",
+        body: "Se a mensagem empurra você pra clicar “agora” ou “em minutos”, desconfie.",
+      },
+      {
+        badge: "Sinal de alerta 2:",
+        icon: "🪪",
+        title: "Pedido de dados sensíveis",
+        body: "CPF, senha ou foto de documento através de um link fora do site oficial da certificadora.",
+      },
+      {
+        badge: "Sinal de alerta 3:",
+        icon: "💸",
+        title: "Cobrança avulsa",
+        body: "Feita por PIX ou boleto, sem contrato, sem nota fiscal, sem contato prévio com a empresa.",
+      },
+    ],
+    slidePosition: [3, 4],
+    outputFile: "sample-alert-cards-01.png",
+  },
+];
+
 async function main() {
   await mkdir(OUTPUT_DIR, { recursive: true });
 
@@ -303,6 +365,11 @@ async function main() {
 
     console.log("\nRenderizando exemplo de retrato com citação...");
     for (const spec of quotePortraitSample) {
+      await renderSlide(browser, spec, ai);
+    }
+
+    console.log("\nRenderizando exemplo de cards de alerta...");
+    for (const spec of alertCardsSample) {
       await renderSlide(browser, spec, ai);
     }
   } finally {

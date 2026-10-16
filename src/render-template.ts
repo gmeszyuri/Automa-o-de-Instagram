@@ -54,7 +54,7 @@ function listItems(items: string[]): string {
 }
 
 interface SlideSpec {
-  template: "single-hook" | "carousel-content" | "carousel-cta" | "illustrated-hook";
+  template: "single-hook" | "carousel-content" | "carousel-cta" | "illustrated-hook" | "quote-portrait";
   background: "dark" | "light";
   badgeText?: string;
   headlineHtml: string;
@@ -65,19 +65,23 @@ interface SlideSpec {
   slidePosition?: [number, number];
   outputFile: string;
   /**
-   * Apenas para template "illustrated-hook": post de concorrente que inspira a
-   * cena ("top" ou "handle/code" de references/). Um modelo com visão lê a
-   * imagem e escreve a cena para a headline deste slide.
+   * Apenas para templates "illustrated-hook"/"quote-portrait": post de
+   * concorrente que inspira a cena ("top" ou "handle/code" de references/).
+   * Um modelo com visão lê a imagem e escreve a cena para a headline deste slide.
    */
   reference?: string;
   /**
-   * Apenas para template "illustrated-hook": cena em inglês escrita à mão.
-   * Usada quando não há `reference` ou quando a coleta de referências ainda
-   * não foi feita.
+   * Apenas para templates "illustrated-hook"/"quote-portrait": cena em inglês
+   * escrita à mão. Usada quando não há `reference` ou quando a coleta de
+   * referências ainda não foi feita.
    */
   illustrationPrompt?: string;
   /** Apenas para template "illustrated-hook": texto do handle exibido na lateral. */
   handleText?: string;
+  /** Apenas para template "quote-portrait": rótulo pequeno do contato (ex: "Entre em contato"). */
+  contactLabel?: string;
+  /** Apenas para template "quote-portrait": valor em destaque do contato (ex: telefone). */
+  contactValue?: string;
 }
 
 const LOGO_FOR_BG = {
@@ -113,7 +117,7 @@ async function resolveScene(spec: SlideSpec, ai: AiClients): Promise<{ scene: st
     );
   }
   if (!spec.illustrationPrompt) {
-    throw new Error(`Slide ${spec.outputFile} usa illustrated-hook mas não tem reference válida nem illustrationPrompt`);
+    throw new Error(`Slide ${spec.outputFile} não tem reference válida nem illustrationPrompt`);
   }
   return { scene: spec.illustrationPrompt, notes: "Prompt manual (sem referência)" };
 }
@@ -125,9 +129,11 @@ async function generateIllustration(ai: AiClients, spec: SlideSpec): Promise<str
   const { scene, notes } = await resolveScene(spec, ai);
   // Guarda a cena usada ao lado da imagem, para revisar por que ela saiu assim.
   await writeFile(destPath.replace(/\.png$/, ".prompt.txt"), `${notes}\n\nCena: ${scene}\n`);
-  // Paisagem: a moldura do illustrated-hook é 1080x780, então uma imagem
-  // 1536x1024 perde só as bordas laterais (uma retrato perderia metade da altura).
-  await ai.images.generateToFile({ prompt: scene, size: "1536x1024" }, destPath);
+  // "illustrated-hook" usa uma moldura paisagem 1080x780 (1536x1024 perde só as
+  // bordas laterais); "quote-portrait" cobre o slide inteiro 1080x1350, então
+  // pede retrato para não perder altura no recorte.
+  const size = spec.template === "quote-portrait" ? "1024x1536" : "1536x1024";
+  await ai.images.generateToFile({ prompt: scene, size }, destPath);
   // caminho relativo a partir de templates/, onde o HTML temporário é escrito
   return `output/illustrations/${fileName}`;
 }
@@ -141,7 +147,7 @@ async function renderSlide(
   const templateHtml = await readFile(templatePath, "utf-8");
 
   let illustrationSrc = "";
-  if (spec.template === "illustrated-hook") {
+  if (spec.template === "illustrated-hook" || spec.template === "quote-portrait") {
     if (!ai) {
       console.warn(`  ! Pulando ${spec.outputFile}: OPENAI_API_KEY não configurado`);
       return;
@@ -149,6 +155,13 @@ async function renderSlide(
     console.log(`  ... gerando ilustração para ${spec.outputFile} via OpenAI`);
     illustrationSrc = await generateIllustration(ai, spec);
   }
+
+  const contactHtml =
+    spec.contactLabel || spec.contactValue
+      ? `${spec.contactLabel ? `<span>${spec.contactLabel}</span>` : ""}${
+          spec.contactValue ? `<strong>${spec.contactValue}</strong>` : ""
+        }`
+      : "";
 
   const html = render(templateHtml, {
     logoSrc: LOGO_FOR_BG[spec.background],
@@ -161,6 +174,7 @@ async function renderSlide(
     listHtml: spec.listItemsText ? listItems(spec.listItemsText) : "",
     ctaPillHtml: spec.ctaPillText ? `<span class="cta-pill">${spec.ctaPillText}</span>` : "",
     ctaTextHtml: spec.ctaText ? `<span class="cta-text">${spec.ctaText}</span>` : "",
+    contactHtml,
   });
 
   // Escreve um HTML temporário dentro de templates/ para que os caminhos
@@ -241,6 +255,21 @@ const illustratedSample: SlideSpec[] = [
   },
 ];
 
+const quotePortraitSample: SlideSpec[] = [
+  {
+    template: "quote-portrait",
+    background: "dark",
+    headlineHtml: `“Atenção: seu certificado <mark class="alert">vence hoje</mark>.”`,
+    bodyHtml: `Essa frase já pegou contador, advogado e empresário de surpresa. <mark>Você reconheceria o aviso?</mark>`,
+    reference: "top",
+    illustrationPrompt:
+      "Three-quarter portrait of a confident Brazilian businesswoman in her 40s wearing a navy blazer, arms crossed, standing in a modern office with soft window light from one side, shallow depth of field",
+    contactLabel: "Entre em contato",
+    contactValue: "0800 123 4567",
+    outputFile: "sample-quote-01.png",
+  },
+];
+
 async function main() {
   await mkdir(OUTPUT_DIR, { recursive: true });
 
@@ -265,6 +294,11 @@ async function main() {
 
     console.log("\nRenderizando exemplo com ilustração de IA...");
     for (const spec of illustratedSample) {
+      await renderSlide(browser, spec, ai);
+    }
+
+    console.log("\nRenderizando exemplo de retrato com citação...");
+    for (const spec of quotePortraitSample) {
       await renderSlide(browser, spec, ai);
     }
   } finally {

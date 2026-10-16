@@ -10,6 +10,10 @@
   --text-on-accent: #073D1F;
   --muted-on-dark: #B9D9D2;
   --muted-on-light: #4B625D;
+  /* Cor semântica de alerta/urgência — separada do verde da marca, usada
+     só em destaques que comunicam risco (ex: certificado vencendo). */
+  --alert: #E8364A;
+  --text-on-alert: #FFFFFF;
 }
 
 * {
@@ -87,6 +91,13 @@ html, body {
   border-radius: 6px;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+}
+
+/* Variante de alerta/urgência (ex: "certificado vence hoje") — usar com
+   moderação, só quando a mensagem é mesmo um aviso de risco/prazo. */
+.headline mark.alert {
+  background: var(--alert);
+  color: var(--text-on-alert);
 }
 
 .body-text {
@@ -249,4 +260,100 @@ html, body {
   font-weight: 600;
   color: var(--muted-on-dark);
   opacity: 0.8;
+}
+
+/* Variante "retrato com citação": foto de retrato de fundo cobrindo o
+   slide inteiro, com um véu escuro por trás para o texto ficar legível,
+   inspirado na estrutura (não no conteúdo) de um formato visto em
+   concorrente: citação de alerta + foto de pessoa + contato no rodapé. */
+.slide--quote {
+  padding: 0;
+  position: relative;
+  color: var(--text-on-dark);
+}
+
+.portrait-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.portrait-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    100deg,
+    rgba(8, 26, 23, 0.97) 0%,
+    rgba(8, 26, 23, 0.88) 36%,
+    rgba(8, 26, 23, 0.35) 62%,
+    rgba(8, 26, 23, 0) 80%
+  );
+}
+
+.quote-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 56px 72px 64px;
+}
+
+.quote-content .logo {
+  position: static;
+  margin-bottom: auto;
+}
+
+.quote-headline {
+  font-weight: 800;
+  font-size: 60px;
+  line-height: 1.18;
+  max-width: 640px;
+  margin-bottom: 24px;
+}
+
+.quote-headline mark {
+  position: relative;
+  padding: 0 10px;
+  border-radius: 6px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.quote-headline mark.alert {
+  background: var(--alert);
+  color: var(--text-on-alert);
+}
+
+.quote-body {
+  font-size: 30px;
+  line-height: 1.4;
+  max-width: 600px;
+  color: var(--muted-on-dark);
+  margin-bottom: 32px;
+}
+
+.quote-body mark {
+  background: var(--alert);
+  color: var(--text-on-alert);
+  padding: 0 8px;
+  border-radius: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.contact-row {
+  font-size: 24px;
+  color: var(--muted-on-dark);
+}
+
+.contact-row strong {
+  display: block;
+  font-size: 32px;
+  color: var(--text-on-dark);
+  font-weight: 700;
 }

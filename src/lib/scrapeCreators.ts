@@ -66,4 +66,14 @@ export class ScrapeCreatorsClient {
       next_max_id: nextMaxId ?? "",
     });
   }
+
+  /**
+   * Busca um post específico pela URL do Instagram.
+   * A forma exata da resposta não é documentada publicamente — retorna o
+   * JSON bruto; quem chama precisa extrair o post de forma defensiva
+   * (ver resolvePostFromRawResponse em fetch-reference-post.ts).
+   */
+  async getPostRaw(postUrl: string): Promise<unknown> {
+    return this.request<unknown>("/v1/instagram/post", { url: postUrl });
+  }
 }

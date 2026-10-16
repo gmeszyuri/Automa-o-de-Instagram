@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "collect-references": "tsx src/collect-references.ts",
+    "fetch-reference-post": "tsx src/fetch-reference-post.ts",
     "render-sample": "tsx src/render-template.ts",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit"
